@@ -33,7 +33,9 @@
 ## command
 
 * npm init
+
 * npm install gulp -g
+
 * npm run dev // [gulp]
 
 ## run
