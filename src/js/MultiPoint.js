@@ -1,5 +1,6 @@
 // MultiPoint
 // 缓冲区, 多点绘制
+// 绘制图形, 三角形
 function main() {
   // Retrieve the <canvas> element
   var canvas = document.getElementById("webgl");
@@ -23,6 +24,14 @@ function main() {
     console.log("Failed To Initialize Shaders.");
     return;
   }
+  
+  // 设置默认颜色
+  var u_FragColor = gl.getUniformLocation(gl.program, "u_FragColor");
+  if (!u_FragColor) {
+    console.log("Failed To Get The Storage Location Of u_FragColor");
+    return;
+  }
+  gl.uniform4f(u_FragColor, 1.0, 0.0, 0.0, 1.0);
 
   // 设置顶点位置等数据
   var n = initVertexBuffers(gl);
@@ -37,8 +46,8 @@ function main() {
   // 清空 Canvas
   gl.clear(gl.COLOR_BUFFER_BIT);
 
-  // 绘制 n 点
-  gl.drawArrays(gl.POINTS, 0, 1);
+  // 绘制 n 点 | TRIANGLES 指定三角形
+  gl.drawArrays(gl.TRIANGLES, 0, n);
 }
 
 // 定义 顶点着色器 程序
@@ -48,8 +57,6 @@ var VSHADER_SOURCE =
   "void main() {\n" +
   // 设置坐标
   "gl_Position = a_Position;\n" +
-  // 设置尺寸
-  "gl_PointSize = a_PointSize;\n" +
   "}\n";
 
 // 定义 片元着色器 程序
@@ -90,22 +97,6 @@ function initVertexBuffers(gl) {
   gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, 0, 0);
   // 连接 a_Position 变量与分配给他的缓冲区对象
   gl.enableVertexAttribArray(a_Position);
-
-  // 设置默认大小
-  var a_PointSize = gl.getAttribLocation(gl.program, "a_PointSize");
-  if (a_PointSize < 0) {
-    console.log("Failed To Get The Storage Location Of a_PointSize");
-    return;
-  }
-  gl.vertexAttrib1f(a_PointSize, 10.0);
-
-  // 设置默认颜色
-  var u_FragColor = gl.getUniformLocation(gl.program, "u_FragColor");
-  if (!u_FragColor) {
-    console.log("Failed To Get The Storage Location Of u_FragColor");
-    return;
-  }
-  gl.uniform4f(u_FragColor, 1.0, 0.0, 0.0, 1.0);
 
   return n;
 }
