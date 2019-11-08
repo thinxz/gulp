@@ -1,6 +1,6 @@
 // MultiPoint
 // 缓冲区, 多点绘制
-// 绘制图形, 三角形
+// 绘制图形, 矩形 [两个三角形组成]
 function main() {
   // Retrieve the <canvas> element
   var canvas = document.getElementById("webgl");
@@ -24,7 +24,7 @@ function main() {
     console.log("Failed To Initialize Shaders.");
     return;
   }
-  
+
   // 设置默认颜色
   var u_FragColor = gl.getUniformLocation(gl.program, "u_FragColor");
   if (!u_FragColor) {
@@ -47,7 +47,7 @@ function main() {
   gl.clear(gl.COLOR_BUFFER_BIT);
 
   // 绘制 n 点 | TRIANGLES 指定三角形
-  gl.drawArrays(gl.TRIANGLES, 0, n);
+  gl.drawArrays(gl.TRIANGLE_STRIP, 0, n);
 }
 
 // 定义 顶点着色器 程序
@@ -70,10 +70,10 @@ var FSHADER_SOURCE =
   "}\n";
 
 function initVertexBuffers(gl) {
-  var vertices = new Float32Array([0.0, 0.5, -0.5, -0.5, 0.5, -0.5]);
+  var vertices = new Float32Array([-0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, -0.5]);
 
   // 点个数
-  var n = 3;
+  var n = 4;
 
   // 创建缓冲区对象
   var vertexBuffer = gl.createBuffer();
