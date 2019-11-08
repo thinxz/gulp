@@ -1,4 +1,5 @@
 // PointCanvas
+// attribute 变量, 从外部向顶点着色器内部传输数据
 function main() {
   // Retrieve the <canvas> element
   var canvas = document.getElementById("webgl");
@@ -23,6 +24,25 @@ function main() {
     return;
   }
 
+  // 获取 attribute 变量的存储位置
+  var a_Position = gl.getAttribLocation(gl.program, "a_Position");
+  if (a_Position < 0) {
+    console.log("Failed To Get The Storage Location Of a_Position");
+    return;
+  }
+
+  // 将顶点位置, 传递给 arrtibute 变量
+  gl.vertexAttrib3f(a_Position, 0.0, 0.0, 0.0);
+
+  //
+  var a_PointSize = gl.getAttribLocation(gl.program, "a_PointSize");
+  if (a_PointSize < 0) {
+    console.log("Failed To Get The Storage Location Of a_PointSize");
+    return;
+  }
+  //
+  gl.vertexAttrib1f(a_PointSize, 10.0);
+
   // 设置 Canvas 背景色
   gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
@@ -35,11 +55,13 @@ function main() {
 
 // 定义 顶点着色器 程序
 var VSHADER_SOURCE =
+  "attribute vec4 a_Position;\n" +
+  "attribute float a_PointSize;\n" +
   "void main() {\n" +
   // 设置坐标
-  "gl_Position = vec4(0.0, 0.0, 0.0, 1.0);\n" +
+  "gl_Position = a_Position;\n" +
   // 设置尺寸
-  "gl_PointSize = 10.0;\n" +
+  "gl_PointSize = a_PointSize;\n" +
   "}\n";
 
 // 定义 片元着色器 程序
