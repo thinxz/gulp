@@ -1,5 +1,6 @@
 // PointCanvas
 // attribute 变量, 从外部向顶点着色器内部传输数据
+// 根据鼠标点击, 动态创建显示点
 function main() {
   // Retrieve the <canvas> element
   var canvas = document.getElementById("webgl");
@@ -43,6 +44,11 @@ function main() {
   //
   gl.vertexAttrib1f(a_PointSize, 10.0);
 
+  // 注册鼠标点击事件响应函数
+  canvas.onmousedown = function(ev) {
+    click(ev, gl, canvas, a_Position);
+  };
+
   // 设置 Canvas 背景色
   gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
@@ -70,3 +76,35 @@ var FSHADER_SOURCE =
   // 设置颜色
   "gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);\n" +
   "}\n";
+
+// 鼠标点击位置数组
+// 每次点击都将坐标保存 [x,y,x,y]
+var g_points = [];
+function click(ev, gl, canvas, a_Position) {
+  var x = ev.clientX;
+  var y = ev.clientY;
+
+  var rect = ev.target.getBoundingClientRect();
+  x = (x - rect.left - canvas.height / 2) / (canvas.height / 2);
+  y = (canvas.width / 2 - (y - rect.top)) / (canvas.width / 2);
+
+  g_points = [];
+
+  // 坐标存储到数组
+  g_points.push(x);
+  g_points.push(y);
+
+  // 清除
+  gl.clear(gl.COLOR_BUFFER_BIT);
+
+  // 将保存的数据数据, 进行渲染
+  var len = g_points.length;
+  console.log(g_points);
+  for (var i = 0; i < len; i += 2) {
+    // 将点的位置传递到变量中 a_Position
+    gl.vertexAttrib3f(a_Position, g_points[i], g_points[i + 1], 0.0);
+
+    // 绘制点
+    gl.drawArrays(gl.POINTS, 0, 1);
+  }
+}
